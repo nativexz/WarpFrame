@@ -143,6 +143,7 @@ class Server {
       }
     })
     this.app.listen(port)
+    console.log(`ok: ${port}`)
   }
 }
 
