@@ -11,7 +11,7 @@ WarpFrame is a high-performance rendering engine that warps web images and anima
 
 Built for reliability, it features server-side caching and a unique pre-loading system for perfectly smooth, lag-free GIF playback once loaded.
 
-### Core Features
+## Core Features
 
 -   **Dual Format Support:** Flawlessly renders both static images (PNG/JPG) and animated GIFs.
 -   **Smooth GIF Playback:** All GIF frames are pre-loaded to the client for a seamless animation loop.
