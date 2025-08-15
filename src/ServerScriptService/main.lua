@@ -1,3 +1,6 @@
+
+-- ddos
+
 local https = game:GetService("HttpService")
 local reps = game:GetService("ReplicatedStorage")
 local ev = reps.Events
