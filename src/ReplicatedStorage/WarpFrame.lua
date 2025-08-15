@@ -1,84 +1,95 @@
-local assets = game:GetService("AssetService")
-local reps = game:GetService("ReplicatedStorage")
-local ev = reps.Events
 
-local b64c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-local function dec(data) data=string.gsub(data,'[^'..b64c..'=]','') return(data:gsub('.',function(x)if(x=='=')then return''end local r,f='',(b64c:find(x)-1)for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and'1'or'0')end return r end):gsub('%d%d%d?%d?%d?%d?%d?%d?',function(x)if(#x~=8)then return''end local c=0;for i=1,8 do c=c+(x:sub(i,i)=='1'and 2^(8-i)or 0)end return string.char(c)end)) end
+-- i fucked up with that gif... nigga i didn't known that's gonna be hard... but nvm
+-- so i little minified that btw, on future i will optimizate that because with gifs probelms...
+-- abt the base64_dec it's every time error "SCRIPT HAS BEEN TIMEOUT DDOS YOUR ASS"...
 
-local warpframe = {}
-warpframe.__index = warpframe
+local hs = game:GetService("HttpService")
+local as = game:GetService("AssetService")
+local rs = game:GetService("ReplicatedStorage")
+local ev = rs:WaitForChild("Events")
 
-function warpframe.new(img_label)
-	local self = setmetatable({}, warpframe)
-	self.img = img_label; self.current_sid = nil
+local function b2s(d)
+	local t = d.bytes or d
+	if not t then return "" end
+	local c = {}
+	for i = 1, #t do c[i] = string.char(t[i]) end
+	return table.concat(c)
+end
+
+local R = {}
+R.__index = R
+
+function R.new(lbl)
+	local self = setmetatable({}, R)
+	self.lbl = lbl
+	self.sid = nil
 	return self
 end
 
-function warpframe:request(opts)
-	self.current_sid = nil; task.wait()
-	self.img.Image = ""
-	local session = ev.InitImg:InvokeServer(opts)
-	if not session or not session.sid then return warn("init failed") end
-	self.current_sid = session.sid
-	local img = assets:CreateEditableImage({Size = Vector2.new(session.w, session.h)})
-	self.img.Size = UDim2.fromOffset(session.w, session.h)
-	self.img.ImageContent = Content.fromObject(img)
-	if session.type == "gif" then
-		task.spawn(self._animate_gif, self, session, img)
+function R:rq(o)
+	self.sid = nil
+	task.wait()
+	self.lbl.Image = ""
+	local s = ev.InitImg:InvokeServer(o or {})
+	if not s or not s.sid then return end
+	self.sid = s.sid
+
+	local e = as:CreateEditableImage({ Size = Vector2.new(s.w, s.h) })
+	self.lbl.Size = UDim2.fromOffset(s.w, s.h)
+	self.lbl.ImageContent = Content.fromObject(e)
+
+	if s.type == "gif" then
+		task.spawn(self._ani, self, s, e)
 	else
-		task.spawn(self._draw_static, self, session, img)
+		task.spawn(self._dst, self, s, e)
 	end
 end
 
-function warpframe:_draw_static(sess, img)
-	for i = 0, sess.total - 1 do
-		if self.current_sid ~= sess.sid then break end
-		local chunk_data, retries = ev.GetData:InvokeServer(sess.sid, i), 0
-		while not chunk_data and retries < 3 do retries=retries+1; task.wait(0.5); chunk_data = ev.GetData:InvokeServer(sess.sid, i) end
-		if chunk_data and chunk_data[1] then
-			local chunk = chunk_data[1]
-			img:WritePixelsBuffer(Vector2.new(chunk.x, chunk.y), Vector2.new(chunk.w, chunk.h), buffer.fromstring(dec(chunk.b64)))
-		else warn("failed to get chunk " .. i) end
-		task.wait()
-	end
-end
-
-function warpframe:_animate_gif(sess, img)
-	local all_frames = table.create(sess.total)
-	local batch_size = 10
-	for i = 0, sess.total - 1, batch_size do
-		if self.current_sid ~= sess.sid then return end
-		local frame_batch = ev.GetData:InvokeServer(sess.sid, i, batch_size)
-		if frame_batch then
-			for j, frame_data in ipairs(frame_batch) do
-				task.spawn(function()
-					all_frames[i + j] = buffer.fromstring(dec(frame_data.b64))
-				end)
-				if j % 5 == 0 then
-					task.wait()
-				end
-			end
-		else
-			warn("failed to get frame batch starting at " .. i)
+function R:_dst(s, e)
+	for i = 0, s.total - 1 do
+		if self.sid ~= s.sid then return end
+		local r = ev.GetData:InvokeServer(s.sid, i)
+		local ch = r.chunks or r
+		for _, c in ipairs(ch) do
+			local str = b2s(c)
+			local buf = buffer.fromstring(str)
+			e:WritePixelsBuffer(Vector2.new(c.x, c.y),Vector2.new(c.w, c.h),buf)
 		end
 		task.wait()
 	end
+end
+
+function R:_ani(s, e)
+	local F, bs = {}, 10
+	local speedMul = 1.02^100 --math :genius: DONT USE MATH.FLOOR PLEASE... or you fuck up.
+
+	-- preload frames
+	for i = 0, s.total - 1, bs do
+		if self.sid ~= s.sid then return end
+		local r = ev.GetData:InvokeServer(s.sid, i, bs)
+		local fr = r.frames or r
+		for j, f in ipairs(fr) do
+			F[i + j] = buffer.fromstring(b2s(f))
+		end
+		task.wait()
+	end
+
+	-- ensure full load
+	while #F < s.total do
+		if self.sid ~= s.sid then return end
+		task.wait(0.05)
+	end
+
 	
-	while #all_frames < sess.total do
-		if self.current_sid ~= sess.sid then return end
-		task.wait(0.1)
-	end
-
-	while self.current_sid == sess.sid do
-		for i, frame_buf in ipairs(all_frames) do
-			if self.current_sid ~= sess.sid then break end
-			if frame_buf then
-				img:WritePixelsBuffer(Vector2.zero, img.Size, frame_buf)
-			end
-			local delay = sess.delays[i]
-			task.wait(delay / 100)
+	while self.sid == s.sid do
+		for idx, buf in ipairs(F) do
+			if self.sid ~= s.sid then return end
+			e:WritePixelsBuffer(Vector2.new(0, 0), e.Size, buf)
+			local baseDelay = s.delays[idx] or 100
+			task.wait((baseDelay / 100) / speedMul)
 		end
 	end
 end
 
-return warpframe
+
+return R
