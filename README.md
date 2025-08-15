@@ -4,7 +4,7 @@ WarpFrame is a high-performance rendering engine that warps web images and anima
 
 Built for reliability, it features server-side caching and a unique pre-loading system for perfectly smooth, lag-free GIF playback once loaded.
 
-**Disclaimer of Liability**  
+## Disclaimer of Liability
 “**WarpFrame** is provided “as is,” without warranty of any kind. The author and contributors disclaim all liability for any damages or losses arising from the use or misuse of this system. Users assume all responsibility for compliance with platform rules and regulations. By integrating **WarpFrame**, you agree that the author is not responsible for any content created, displayed, or distributed through this system.”
 
 ## Educational Purpose Notice
