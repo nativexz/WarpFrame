@@ -3,6 +3,10 @@
 **Disclaimer of Liability**  
 “**WarpFrame** is provided “as is,” without warranty of any kind. The author and contributors disclaim all liability for any damages or losses arising from the use or misuse of this system. Users assume all responsibility for compliance with platform rules and regulations. By integrating **WarpFrame**, you agree that the author is not responsible for any content created, displayed, or distributed through this system.”
 
+## Educational Purpose Notice
+
+**WarpFrame** is provided solely for **educational purposes** to demonstrate how to render external images and GIFs within a Roblox experience. It is not intended for production use or to facilitate any violations of platform policies.
+
 WarpFrame is a high-performance rendering engine that warps web images and animated GIFs directly into your Roblox experience.
 
 Built for reliability, it features server-side caching and a unique pre-loading system for perfectly smooth, lag-free GIF playback once loaded.
@@ -42,7 +46,11 @@ node s.js
 #### 2. Roblox
 
 1.  Place the scripts from the `src` folder into their corresponding services in Roblox Studio (`ReplicatedStorage`, `ServerScriptService`, etc.).
-2.  Create Folder in `ReplicatedStorage` and name it: "Events", then create inside two `RemoteFunction`: 1.GetData, 2.InitImg
+2. In **ReplicatedStorage**:
+   - Create a **Folder** and name it **Events**.
+   - Inside the **Events** folder, add two **RemoteFunction** instances:
+     1. **GetData**
+     2. **InitImg**
 3.  In **Game Settings > Security**, enable `Allow HTTP Requests`.
 4.  In **File > Beta Features**, enable `EditableImage and EditableMesh` and **restart Studio**.
 
