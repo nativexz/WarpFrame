@@ -39,7 +39,7 @@ node s.js
 #### 2. Roblox
 
 1.  Place the scripts from the `src` folder into their corresponding services in Roblox Studio (`ReplicatedStorage`, `ServerScriptService`, etc.).
-2.  Create Folder in `ReplicatedStorage`: `Events`, and create two `RemoteFunction`: 1.GetData, 2.InitImg
+2.  Create Folder in `ReplicatedStorage`: name it: `Events`, then create inside two `RemoteFunction`: 1.GetData, 2.InitImg
 3.  In **Game Settings > Security**, enable `Allow HTTP Requests`.
 4.  In **File > Beta Features**, enable `EditableImage and EditableMesh` and **restart Studio**.
 
