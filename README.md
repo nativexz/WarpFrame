@@ -57,8 +57,10 @@ node s.js
 ### Usage Example
 
 ```lua
+-- In ScreenGui 
 local WarpFrame = require(game.ReplicatedStorage.WarpFrame)
 local imageLabel = script.Parent.ImageContainer
+local staticButton = script.Parent.StaticButton
 
 local renderer = WarpFrame.new(imageLabel)
 
