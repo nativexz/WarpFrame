@@ -57,12 +57,13 @@ node s.js
 ### Usage Example
 
 ```lua
--- In StarterGui/WarpFrameUI/Controller.lua
 local WarpFrame = require(game.ReplicatedStorage.WarpFrame)
 local imageLabel = script.Parent.ImageContainer
 
 local renderer = WarpFrame.new(imageLabel)
 
--- Connect to your buttons to call the request function
--- task.spawn(renderer.request, renderer, {type = "gif"})
+-- connect to your buttons to call the request function, example:
+staticButton.MouseButton1Click:Connect(function()
+	task.spawn(renderer.rq, renderer, {type = "sfw"}) -- or {type = "gif"}
+end)
 ```
