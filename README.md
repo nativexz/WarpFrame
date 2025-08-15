@@ -18,7 +18,7 @@ WarpFrame is designed for reliability. Performance will vary based on server and
 -   **CPU:** AMD Athlon @ 2.9GHz
 -   **GPU:** GeForce GT 220
 -   **RAM:** 4GB
--   **Result:** `~2-3 minutes` to pre-load a 59-frame GIF.
+-   **Result:** `~1 minute` to pre-load a 59-frame GIF.
 
 *Future optimizations to the client-side decoding process are planned to improve these pre-load times.*
 
@@ -39,8 +39,9 @@ node s.js
 #### 2. Roblox
 
 1.  Place the scripts from the `src` folder into their corresponding services in Roblox Studio (`ReplicatedStorage`, `ServerScriptService`, etc.).
-2.  In **Game Settings > Security**, enable `Allow HTTP Requests`.
-3.  In **File > Beta Features**, enable `EditableImage and EditableMesh` and **restart Studio**.
+2.  Create Folder in `ReplicatedStorage`: `Events`, and create two `RemoteFunction`: 1.GetData, 2.InitImg
+3.  In **Game Settings > Security**, enable `Allow HTTP Requests`.
+4.  In **File > Beta Features**, enable `EditableImage and EditableMesh` and **restart Studio**.
 
 ### Usage Example
 
